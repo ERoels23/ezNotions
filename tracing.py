@@ -1,6 +1,7 @@
 import sample
 import sys
 from ezFrame import ezFrame
+from assignment import assignment
 from ezEvent import ezEvent
 import inspect as ins
 from pprint import pprint as pp
@@ -40,10 +41,10 @@ for f in ezFrames:
 
 # event creation and frame allocation is currently done manually
 # each frame must be given an event type (ie. "assign", "funccall", "funcdef", "classdef")
-event1 = ezEvent("assign")
-event2 = ezEvent("assign")
-event3 = ezEvent("assign")
-event4 = ezEvent("assign")
+event1 = assignment()
+event2 = assignment()
+event3 = assignment()
+event4 = assignment()
 
 # remember, there is a single trace for each assignment,
 # and the first and last trace are always calling and returning from run()
@@ -51,6 +52,12 @@ event1.add([ezFrames[1], ezFrames[2]])
 event2.add([ezFrames[2], ezFrames[3]])
 event3.add([ezFrames[3], ezFrames[4]])
 event4.add([ezFrames[4], ezFrames[5]])
+
+# add and analyze are now two separate functions, making it more flexible
+event1.analyze()
+event2.analyze()
+event3.analyze()
+event4.analyze()
 
 # uses the __repr__ of ezEvent to print Event descriptions
 print("\nRESULTS: ")
