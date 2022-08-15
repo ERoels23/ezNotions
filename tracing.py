@@ -1,6 +1,4 @@
-import debugging
-import simplest
-import simpler
+import sample
 import sys
 from ezFrame import ezFrame
 from ezEvent import ezEvent
@@ -10,12 +8,14 @@ from pprint import pprint as pp
 ezFrames = []
 
 # may also need to change to Mac syntax if on Mac
-currFile = "c:\\Users\\Eric\\Desktop\\NOTIONS\\ERoels23.github.io\\simplest.py"
+currFile = "c:\\Users\\Eric\\Desktop\\NOTIONS\\ezNotions\\sample.py"
+currFileMac = "/Users/Eric/NOTIONS/ezNotions/sample.py"
 
 # tracing function
 def mytrace(frame, event, arg):
     # currently excludes calls to built-in functions. 
-    if (frame.f_code.co_filename == currFile or frame.f_back.f_code.co_filename == currFile):
+    if (frame.f_code.co_filename == currFile or frame.f_back.f_code.co_filename == currFile)\
+        or (frame.f_code.co_filename == currFileMac or frame.f_back.f_code.co_filename == currFileMac):
         ez = ezFrame(frame, event, arg)
         ezFrames.append(ez)
 
@@ -25,7 +25,7 @@ def mytrace(frame, event, arg):
 sys.settrace(mytrace)
 
 # run the sample python program, tracing as we go
-simplest.run()
+sample.run()
 
 # pop out the first and last, because it's just call/return for run() in the target file, not useful
 """ 
@@ -44,6 +44,9 @@ event1 = ezEvent("assign")
 event2 = ezEvent("assign")
 event3 = ezEvent("assign")
 event4 = ezEvent("assign")
+
+# remember, there is a single trace for each assignment,
+# and the first and last trace are always calling and returning from run()
 event1.add([ezFrames[1], ezFrames[2]])
 event2.add([ezFrames[2], ezFrames[3]])
 event3.add([ezFrames[3], ezFrames[4]])
