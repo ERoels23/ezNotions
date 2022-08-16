@@ -6,7 +6,7 @@ class ezEvent:
     '''
     assign: (poss: pointer)
     funcdef: (poss: class method)
-    classdef: 
+    classdef: (no variants, but it's complicated enough...)
     funccall: (poss: instantiate, method, )  
     '''
 
@@ -39,32 +39,6 @@ class ezEvent:
                 self.frameList += f
         except:
             raise TypeError("ezEvent 'add()' requires ezFrame or list of ezFrames")
-        
-        if type == "funcdef":
-            # new stack pointer, call type, curfunc for name
-            # need: function name, argument names, return value name (if applicable)
-            ez1 = self.frameList[0]
-            ez2 = self.frameList[1]
-
-            # format: line with almost no info, 
-            # then line no. skips >1, another line with funcName as a local variable
-
-            # obtain name of new function, it's recorded as a new local variable
-            newFunc = { k : ez2.locs[k] for k in set(ez2.locs) - set(ez1.locs) }
-            funcName = list(newFunc.keys())[0]
-
-            self.strRepr = f"New custom function '{funcName}()' defined"
-
-        elif type == "funccall":
-            # this is where it starts to get pretty tricky
-            # 
-            return None
-        
-        '''
-        else: # "classdef"
-            return None
-        '''
-
 
     def __str__(self):
         return self.strRepr
