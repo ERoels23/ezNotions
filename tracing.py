@@ -1,5 +1,6 @@
 import sample
 import sys
+import inspect
 from ezFrame import ezFrame
 from assignment import assignment
 from ezEvent import ezEvent
@@ -9,26 +10,37 @@ from pprint import pprint as pp
 def trace(f, verbose):
     # tracing function, 
     # TODO: inside main(), I know, but I'd have to rewrite it otherwise
-    def mytrace(frame, event, arg):
-        # currently excludes calls to built-in functions.
-        if (frame.f_code.co_filename == currFile or frame.f_back.f_code.co_filename == currFile)\
-                or (frame.f_code.co_filename == currFileMac or frame.f_back.f_code.co_filename == currFileMac):
-            ez = ezFrame(frame, event, arg)
-            ezFrames.append(ez)
 
+
+    def make_my_trace(fn):
+        filename = inspect.getfile(fn)
+
+        def mytrace(frame, event, arg):
+        # currently excludes calls to built-in functions.
+            if (frame.f_code.co_filename == filename or frame.f_back.f_code.co_filename == filename):
+                ez = ezFrame(frame, event, arg)
+                ezFrames.append(ez)
+            return mytrace
         return mytrace
+
     
     ezFrames = []
 
-    # may also need to change to Mac syntax if on Mac
-    currFile = "c:\\Users\\Eric\\Desktop\\NOTIONS\\ezNotions\\" + f
-    currFileMac = "/Users/Eric/NOTIONS/ezNotions/" + f
 
     # ensure that custom trace function is being used
-    sys.settrace(mytrace)
+    def do_trace(fn):
+        tracer = make_my_trace(fn)
+        sys.settrace(tracer)
+        tracer()
+        sys.settrace(None)
+
+    mytracefn = make_my_trace(f)
+
+    do_trace(mytracefn)
+
     # run the sample python program, tracing as we go
     # TODO: how do we ensure that we trace the user-given file?
-    sample.run()
+  
 
     # pop out the first and last, because it's just call/return for run() in the target file, not useful
     """ 

@@ -1,6 +1,7 @@
 from copy import deepcopy
 import ast
 import ujson
+import cloudpickle
 
 class ezFrame:
     address = None
@@ -45,8 +46,8 @@ class ezFrame:
             self.locaddrs[k] = id(frame.f_locals[k])
 
         # attempting to skirt the deepcopy TypeError
-        self.locs = ujson.dumps(frame.f_locals)
-        self.locs = ujson.loads(self.locs)
+        self.locs = cloudpickle.dumps(frame.f_locals)
+        self.locs = cloudpickle.loads(self.locs)
         # seems like that's working... for now
         
         self.args = arg
