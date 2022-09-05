@@ -1,4 +1,5 @@
 from ezFrame import ezFrame
+import abc #abstract base classes
 
 class ezEvent:
     types = ["assign","funcdef","classdef","funccall"]
@@ -20,15 +21,9 @@ class ezEvent:
         only requires type of object before definition, adding frames comes later
         '''
         self.frameList = []
-        self.strRepr = ""
-
         self.strRepr = "Default String"
 
     def add(self, f):
-        '''
-        only expected to be called once, it does calc once added, so use wisely!
-        '''
-
         # generic setup, collect ezFrames/Events in one place
         try:
             if isinstance(f, ezFrame) or isinstance(f, ezEvent):
@@ -39,6 +34,11 @@ class ezEvent:
                 self.frameList += f
         except:
             raise TypeError("ezEvent 'add()' requires ezFrame or list of ezFrames")
+
+    @abc.abstractmethod
+    # doesn't NEED to be abstract, but works well in this case
+    def analyze():
+        pass
 
     def __str__(self):
         return self.strRepr

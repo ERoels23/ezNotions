@@ -4,30 +4,15 @@ import ujson
 import cloudpickle
 
 class ezFrame:
-    address = None
-    line = None
-    eType = None
-    caller = None
-    current = None
-    file = None
-    locs = []
-    locaddrs = []
-    args = []
-
-    # what does my frame need?
-        # Address on Stack
-            # string? really only need it for comps
-        # Line No.
-        # Event Type (line, return, call, etc.)
-            # enum?
-        # Caller Function
-        # Current Function
-        # Local Variables
-        # Local Arguments (?)
-    
-    # maybe?
-        # Filename
-            # PythonTutor, for example, does not support >1 file at a time
+    address = None  # stack memory address of the frame
+    line = None     # line number in the file
+    eType = None    # line, return, etc.
+    caller = None   # caller function for this frame
+    current = None  # current function being run
+    file = None     # full filepath of current file
+    locs = []       # contain local variables
+    locaddrs = []   # contain addresses of local variables
+    args = []       # local arguments for 'current' function
 
     def __init__(self, frame, event, arg):
         # requires a live frame object in order to instantiate
@@ -52,7 +37,6 @@ class ezFrame:
         
         self.args = arg
         self.file = frame.f_code.co_filename
-
 
     def ezPrint(self):
         ret = "PROGRAM SNAPSHOT:\n"
