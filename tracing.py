@@ -1,4 +1,3 @@
-import sample
 import sys
 import inspect
 from ezFrame import ezFrame
@@ -7,34 +6,22 @@ from ezEvent import ezEvent
 import inspect as ins
 from pprint import pprint as pp
 
-def trace(filename, verbose):
-
-    global ezFrames
+def trace(func_to_trace):
     ezFrames = []
 
-    def make_my_trace(fn):
-        def mytrace(frame, event, arg):
-            if ((fn in frame.f_code.co_filename) or (fn in frame.f_back.f_code.co_filename)):
-                ez = ezFrame(frame, event, arg)
-                ezFrames.append(ez)
-            return mytrace
+    func_file = func_to_trace.__module__
+    def mytrace(frame, event, arg):
+
+        if ((func_file in frame.f_code.co_filename) or (func_file in frame.f_back.f_code.co_filename)):
+            ez = ezFrame(frame, event, arg)
+            ezFrames.append(ez)
         return mytrace
 
-    # ensure that custom trace function is being used
-    def do_trace(fn):
-        traceFunc = make_my_trace(fn)
-        sys.settrace(traceFunc) # set tracer to be custom trace func
-        sample.run() # the current crutch, not sure how to run a file without being able to import it
-        sys.settrace(None)
-
-
-    # function calls begin HERE
-    do_trace(filename)
-
-    if verbose:
-        for frame in ezFrames:
-            frame.ezPrint()
-    
+    sys.settrace(mytrace) # set tracer to be custom trace func
+    func_to_trace() # the current crutch, not sure how to run a file without being able to import it
+    sys.settrace(None)
+    for frame in ezFrames:
+        frame.ezPrint()
 
     '''
     For Gabe:
@@ -67,31 +54,32 @@ def trace(filename, verbose):
     short.py: leftover from my own testing, not necessary
     '''
 
-    # event creation and frame allocation is currently done manually
-    # each frame must be given an event type (ie. "assign", "funccall", "funcdef", "classdef")
-    event1 = assignment()
+    # # event creation and frame allocation is currently done manually
+    # # each frame must be given an event type (ie. "assign", "funccall", "funcdef", "classdef")
+    # event1 = assignment()
 
-    eventList = []
-    eventList.append(event1)
+    # eventList = []
+    # eventList.append(event1)
 
-    # first and last traces are ALWAYS calling and returning from run()
-    event1.add(ezFrames[1])
-    event1.add(ezFrames[2])
+    # # first and last traces are ALWAYS calling and returning from run()
+    # event1.add(ezFrames[1])
+    # event1.add(ezFrames[2])
 
-    # organize events into a list so that you can do this:
-    for e in eventList:
-        e.analyze()
+    # # organize events into a list so that you can do this:
+    # for e in eventList:
+    #     e.analyze()
 
-    # uses the __repr__ of ezEvent to print Event descriptions
-    print(f"\nRESULTS from [{filename}]:")
-    for e in eventList:
-        print(e)
-    print("\nTRACE RESULTS:")
-    print(f"{len(ezFrames)} frames found.")
+    # # uses the __repr__ of ezEvent to print Event descriptions
+    # print(f"\nRESULTS from [{filename}]:")
+    # for e in eventList:
+    #     print(e)
+    # print("\nTRACE RESULTS:")
+    # print(f"{len(ezFrames)} frames found.")
 
-    return eventList
+    #return eventList
 
 if __name__ == "__main__":
     # default filename provided when running this file
     # verbose output is also set to True by default
-    trace("sample.py", True)
+    import sample
+    trace(sample.run)
