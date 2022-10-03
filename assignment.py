@@ -25,7 +25,8 @@ class assignment(ezEvent):
 
         # here is where we could probably make sure it's a variable
         # because a funcDef also gets picked up here
-        if type(newVal) == type(add):
+        if callable(newVal):
+            print("Oh hey look a function definition!")
             # need to quit the assignment creation!
             # AAAAAA abort, this should be a funcDef!!
 
