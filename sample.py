@@ -6,7 +6,7 @@ def run():
     print(type(myFunc))
     x = 1
     y = x
-    myFunc()
+    p = myFunc()
     z = 3
     h = 7
 
