@@ -23,6 +23,12 @@ class assignment(ezEvent):
         newName = list(newvar.keys())[0]
         newVal = list(newvar.values())[0]
 
+        # here is where we could probably make sure it's a variable
+        # because a funcDef also gets picked up here
+        if type(newVal) == type(add):
+            # need to quit the assignment creation!
+            # AAAAAA abort, this should be a funcDef!!
+
         newID = 0
         oldName = 0
 

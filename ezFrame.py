@@ -1,6 +1,5 @@
 from copy import deepcopy
 import ast
-import ujson
 import cloudpickle
 
 class ezFrame:

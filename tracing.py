@@ -54,6 +54,28 @@ def trace(func_to_trace):
     short.py: leftover from my own testing, not necessary
     '''
 
+    # this is the basic idea to check for assignment
+    for i in range(len(ezFrames)-1):
+        f1 = ezFrames[i]
+        f2 = ezFrames[i+1]
+        if f1.address == f2.address:
+            # if (f1.locs != f2.locs) caused issues with funcDef
+            if len(f1.locs) < len(f2.locs):
+                # something new, variable or function
+                # this currently picks up function defs as well
+                # because they show up as a local variable (smart...)
+                # those inner variable assignments also get picked up,
+                # but we need to be more explicit, because that inner assignment
+                # should be wrapped by the outer function definition
+                newAssign = assignment()
+                newAssign.add([f1,f2])
+                newAssign.analyze()
+                print(newAssign)
+        else:
+            # different addresses between frames
+            print("Hey we swapped frames... what's happening?")
+
+
     # # event creation and frame allocation is currently done manually
     # # each frame must be given an event type (ie. "assign", "funccall", "funcdef", "classdef")
     # event1 = assignment()
