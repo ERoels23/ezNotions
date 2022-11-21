@@ -86,9 +86,9 @@ def trace(func_to_trace):
             # if peek() is f2.address, then we're returning
             # else, we're advancing into a new frame
 
-            print(f2.locs)
             codeEvents.append("FRAME SWAP DETECTED")
-
+            
+            '''
             # this would imply that we encoutered:
             # Class Definition/Class Construction/Function Call
                 # Definition: check __qualname__
@@ -103,9 +103,23 @@ def trace(func_to_trace):
                 # New variable 'zz' was assigned value of '<short.run.<locals>.uncustomClass object at 0x7f7d54441090>'
             # Function Call
 
+            # UNIT TESTS WOULD BE AWFULLY HELPFUL
 
-    for e in codeEvents:
-        print(e)
+            # Gabe's simpler algorithm
+            # For each point in program execution
+                # look ahead to the next 'line' event
+                # see then if anything happened later on, can report beforehand
+
+            # Overleaf document (use that outline module)
+                # proposed title
+                # section headings
+                    # subsections, etc.
+                    # sketches of figures, ideas for figures
+                    # excalidraw
+            '''
+            
+    for (i,e) in enumerate(codeEvents):
+        print(f"{i}: {e}")
 
 '''
     # # event creation and frame allocation is currently done manually
@@ -137,4 +151,5 @@ if __name__ == "__main__":
     # default filename provided when running this file
     # verbose output is also set to True by default
     import short
+    import sample
     trace(short.run)
