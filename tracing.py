@@ -6,6 +6,7 @@ from ezEvent import ezEvent
 import inspect as ins
 from pprint import pprint as pp
 
+
 def trace(func_to_trace):
     ezFrames = []
 
@@ -54,28 +55,59 @@ def trace(func_to_trace):
     short.py: leftover from my own testing, not necessary
     '''
 
-    # this is the basic idea to check for assignment
+    codeEvents = []
+   
+    # could be used to keep track of previous locals state before frame swap
+    lastLocalsPerFrame = {}
+
+    # iterate through each adjacent pair of frames
     for i in range(len(ezFrames)-1):
         f1 = ezFrames[i]
         f2 = ezFrames[i+1]
         if f1.address == f2.address:
             # if (f1.locs != f2.locs) caused issues with funcDef
             if len(f1.locs) < len(f2.locs):
-                # something new, variable or function
-                # this currently picks up function defs as well
-                # because they show up as a local variable (smart...)
-                # those inner variable assignments also get picked up,
-                # but we need to be more explicit, because that inner assignment
-                # should be wrapped by the outer function definition
+                # assignment will pass off to FuncDef
                 newAssign = assignment()
                 newAssign.add([f1,f2])
-                newAssign.analyze()
-                print(newAssign)
+                # this reassignment MIGHT change assign to funcdef
+                newAssign = newAssign.analyze()
+                codeEvents.append(newAssign)
+                # print(newAssign)
         else:
             # different addresses between frames
-            print("Hey we swapped frames... what's happening?")
+            '''
+            if oldFrame:
+                codeEvents.append("<<< FRAME RETURN <<<")
+            else:
+                codeEvents.append(">>> FRAME FORWARD >>>")
+            '''
+            # Instead, mimic the stack with your own stack
+            # if peek() is f2.address, then we're returning
+            # else, we're advancing into a new frame
+
+            print(f2.locs)
+            codeEvents.append("FRAME SWAP DETECTED")
+
+            # this would imply that we encoutered:
+            # Class Definition/Class Construction/Function Call
+                # Definition: check __qualname__
+                # okay, __qualname__ isn't the way to go about this...
+
+            # Class Definition
+                # report events inside definition, report new class def after
+                # New variable '__qualname__' was assigned value of 'run.<locals>.customClass'
+                    # CAREFUL! may need lastLocalsPerFrame in order to pick up on this
+            # Class Construction
+                # report events inside definition, report new class object after
+                # New variable 'zz' was assigned value of '<short.run.<locals>.uncustomClass object at 0x7f7d54441090>'
+            # Function Call
 
 
+    for e in codeEvents:
+        print(e)
+
+'''
     # # event creation and frame allocation is currently done manually
     # # each frame must be given an event type (ie. "assign", "funccall", "funcdef", "classdef")
     # event1 = assignment()
@@ -99,9 +131,10 @@ def trace(func_to_trace):
     # print(f"{len(ezFrames)} frames found.")
 
     #return eventList
+'''
 
 if __name__ == "__main__":
     # default filename provided when running this file
     # verbose output is also set to True by default
-    import sample
-    trace(sample.run)
+    import short
+    trace(short.run)

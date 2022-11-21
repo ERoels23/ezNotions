@@ -1,3 +1,4 @@
+from sys import get_asyncgen_hooks
 from ezEvent import ezEvent
 
 class funcdef(ezEvent):

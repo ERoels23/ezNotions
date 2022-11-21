@@ -1,4 +1,5 @@
 from ezEvent import ezEvent
+from funcdef import funcdef
 
 class assignment(ezEvent):
     def __init__(self) -> None:
@@ -26,27 +27,31 @@ class assignment(ezEvent):
         # here is where we could probably make sure it's a variable
         # because a funcDef also gets picked up here
         if callable(newVal):
-            print("Oh hey look a function definition!")
-            # need to quit the assignment creation!
-            # AAAAAA abort, this should be a funcDef!!
+            # print("Oh hey look a function definition!")
+            newFuncDef = funcdef()
+            newFuncDef.add([ez1,ez2])
+            newFuncDef.analyze()
+            # if funcdef, abandon assignment, make funcdef instead
+            return newFuncDef
+        else:
+            newID = 0
+            oldName = 0
 
-        newID = 0
-        oldName = 0
+            # check if new variable is pointer to old variable
+            for tup in ez2.locaddrs.items():
+                if tup[0] == newName:
+                    newID = tup[1]
 
-        # check if new variable is pointer to old variable
-        for tup in ez2.locaddrs.items():
-            if tup[0] == newName:
-                newID = tup[1]
+            for tup in ez2.locaddrs.items():
+                if tup[1] == newID and tup[0] != newName:
+                    isPointer = True
+                    oldName = tup[0]
 
-        for tup in ez2.locaddrs.items():
-            if tup[1] == newID and tup[0] != newName:
-                isPointer = True
-                oldName = tup[0]
-
-        # create string representation from analysis
-        self.strRepr = f"New variable '{newName}' was assigned value of '{newVal}'"
-        if isPointer:
-            self.strRepr += f" (points to '{oldName}')"
+            # create string representation from analysis
+            self.strRepr = f"New variable '{newName}' was assigned value of '{newVal}'"
+            if isPointer:
+                self.strRepr += f" (points to '{oldName}')"
+            return self
 
     def __str__(self):
         return self.strRepr
